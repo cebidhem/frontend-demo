@@ -14,7 +14,7 @@ function App() {
 
   const fetchNames = async () => {
     try {
-      const response = await axios.get<{ names: string[] }>(`${backendUrl}/get_names`);
+      const response = await axios.get<{ names: string[] }>(`${backendUrl}/names`);
       setNames(response.data.names);
     } catch (error) {
       console.error('Error fetching names:', error);
@@ -24,7 +24,7 @@ function App() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await axios.post(`${backendUrl}/store_name`, { name });
+      await axios.post(`${backendUrl}/names`, { name });
       fetchNames(); // Fetch names again after storing a new name
       setName(''); // Clear the input field after submitting
     } catch (error) {
