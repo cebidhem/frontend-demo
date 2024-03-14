@@ -1,8 +1,8 @@
 # Use an official Node.js runtime as a parent image
-FROM node:16.19.1-alpine3.17
+FROM node:16.19.1-alpine3.17 as builder
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -16,8 +16,12 @@ COPY . .
 # Build the React app
 RUN npm run build
 
-# Expose the port for the React app
-EXPOSE 3000
+FROM nginx:1.25.4-alpine3.18 as final
 
-# Command to run the React app
-CMD ["npm", "start"]
+WORKDIR /usr/share/nginx/html
+
+RUN rm -rf ./*
+
+COPY --from=builder /app/build .
+# Containers run nginx with global directives and daemon off
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
